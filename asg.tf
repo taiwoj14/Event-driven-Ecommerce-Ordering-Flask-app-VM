@@ -39,8 +39,7 @@ resource "aws_launch_template" "app_lt" {
               [Service]
               User=ubuntu
               WorkingDirectory=/home/ubuntu/Event-driven-Ecommerce-Ordering-Flask-app-VM
-#              ExecStart=/usr/bin/python3 /home/ubuntu/Event-driven-Ecommerce-Ordering-Flask-app-VM/app.py
-              ExecStart=/usr/local/bin/gunicorn -b 0.0.0.0:5000 app:app
+              ExecStart=/usr/bin/python3 /home/ubuntu/Event-driven-Ecommerce-Ordering-Flask-app-VM/app.py
 
               [Install]
               WantedBy=multi-user.target" | sudo tee /etc/systemd/system/ecommerce-app.service
