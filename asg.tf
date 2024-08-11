@@ -1,7 +1,22 @@
+# Launch Template
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-lunar-23.04-amd64-server-*"]
+  }
+}
+
 resource "aws_launch_template" "app_lt" {
   name_prefix   = "app-launch-template-"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
+
+  # Attach IAM Role to Instance
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2_instance_profile.name
+  }
 
   key_name = "solo-access-key" # Replace with your key pair name
 
@@ -65,22 +80,20 @@ resource "aws_autoscaling_group" "app_asg" {
     version = "$Latest"
   }
 
-  min_size           = 1
-  max_size           = 3
-  desired_capacity   = 1
-  vpc_zone_identifier = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
-  health_check_type  = "EC2"
+  min_size                  = 1
+  max_size                  = 3
+  desired_capacity          = 1
+  vpc_zone_identifier       = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
+  health_check_type         = "EC2"
   health_check_grace_period = 300
 
   target_group_arns = [aws_lb_target_group.app_tg.arn]
 
-  tags = [
-    {
-      key                 = "Name"
-      value               = "app-instance"
-      propagate_at_launch = true
-    }
-  ]
+  tag {
+    key                 = "Name"
+    value               = "app-instance"
+    propagate_at_launch = true
+  }
 
   lifecycle {
     create_before_destroy = true

@@ -1,7 +1,7 @@
 # Route 53 DNS Record for ALB
 resource "aws_route53_record" "app_dns" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "app.yourdomain.com"  # Replace with your subdomain
+  name    = var.sub_domain
   type    = "A"
 
   alias {

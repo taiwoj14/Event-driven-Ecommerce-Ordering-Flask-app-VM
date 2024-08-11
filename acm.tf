@@ -1,12 +1,12 @@
 # Data source to fetch the Route 53 Hosted Zone ID by domain name
 data "aws_route53_zone" "main" {
-  name         = "yourdomain.com"  # Replace with your actual domain name
+  name         = var.domain # Replace with your actual domain name
   private_zone = false
 }
 
 # ACM Certificate
 resource "aws_acm_certificate" "main" {
-  domain_name       = "yourdomain.com"  # Replace with your actual domain name
+  domain_name       = "*.rekeyole.com" # Replace with your actual domain name
   validation_method = "DNS"
 
   tags = {
@@ -28,7 +28,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = data.aws_route53_zone.main.zone_id  # Reference the zone ID here
+  zone_id = data.aws_route53_zone.main.zone_id # Reference the zone ID here
   name    = each.value.name
   type    = each.value.type
   ttl     = 60

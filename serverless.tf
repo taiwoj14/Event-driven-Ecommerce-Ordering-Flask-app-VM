@@ -5,8 +5,8 @@ resource "aws_sns_topic" "order_notifications" {
 
 # SQS Queue for processing orders
 resource "aws_sqs_queue" "order_queue" {
-  name = "order-processing-queue"
- visibility_timeout_seconds = 300
+  name                       = "order-processing-queue"
+  visibility_timeout_seconds = 300
 }
 
 # Subscribe SQS Queue to SNS Topic
@@ -155,8 +155,8 @@ resource "aws_lambda_function" "order_processing_lambda" {
 
   environment {
     variables = {
-      ORDER_TABLE     = aws_dynamodb_table.orders_table.name
-      INVENTORY_TABLE = aws_dynamodb_table.inventory_table.name
+      ORDER_TABLE            = aws_dynamodb_table.orders_table.name
+      INVENTORY_TABLE        = aws_dynamodb_table.inventory_table.name
       PROCESSED_ORDERS_TABLE = aws_dynamodb_table.processed_orders.name
     }
   }
