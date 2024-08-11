@@ -14,8 +14,8 @@ resource "aws_launch_template" "app_lt" {
               sudo apt install git -y
               sudo apt install python3-venv -y
               cd /home/ubuntu
-              git clone https://github.com/ooghenekaro/flask-app.git
-              cd flask-app
+              git clone https://github.com/ooghenekaro/Event-driven-Ecommerce-Ordering-Flask-app-VM.git
+              cd Event-driven-Ecommerce-Ordering-Flask-app-VM
               sudo pip3 install -r requirements.txt --break-system-packages
               echo "[Unit]
               Description=Flask Application
@@ -23,15 +23,15 @@ resource "aws_launch_template" "app_lt" {
 
               [Service]
               User=ubuntu
-              WorkingDirectory=/home/ubuntu/flask-app
-              ExecStart=/usr/bin/python3 /home/ubuntu/flask-app/rest.py
+              WorkingDirectory=/home/ubuntu/Event-driven-Ecommerce-Ordering-Flask-app-VM
+              ExecStart=/usr/bin/python3 /home/ubuntu/Event-driven-Ecommerce-Ordering-Flask-app-VM/app.py
 
               [Install]
-              WantedBy=multi-user.target" | sudo tee /etc/systemd/system/flask-app.service
+              WantedBy=multi-user.target" | sudo tee /etc/systemd/system/ecommerce-app.service
 
               sudo systemctl daemon-reload
-              sudo systemctl start flask-app
-              sudo systemctl enable flask-app
+              sudo systemctl start ecommerce-app
+              sudo systemctl enable ecommerce-app
               EOF
   )
 
