@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Submission</title>
+    <style>
+        body {
+            background-image: url('/static/images/barber-shop.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1, label, input, button {
+            margin: 20px;
+        }
+        .item-row {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .remove-item {
+            background-color: #f44336;
+        }
+        .remove-item:hover {
+            background-color: #d32f2f;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            animation: fadeIn 0.5s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            color: black;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Submit an Order</h1>
+    <form id="order-form" action="/submit_order" method="post">
+        <label for="order_id">Order ID:</label>
+        <input type="text" id="order_id" name="order_id" required><br><br>
+
+        <label for="customer_email">Customer Email:</label>
+        <input type="email" id="customer_email" name="customer_email" required><br><br>
+
+        <div id="items-container">
+            <div class="item-row" id="item-row-0">
+                <label for="item_id_0">Item ID:</label>
+                <input type="text" id="item_id_0" name="items[0][item_id]" required>
+                <label for="quantity_0">Quantity:</label>
+                <input type="number" id="quantity_0" name="items[0][quantity]" min="1" required>
+                <button type="button" class="remove-item" onclick="removeItem(0)">Remove Item</button>
+            </div>
+        </div>
+
+        <button type="button" id="add-item">Add Another Item</button><br><br>
+        <button type="submit">Submit Order</button>
+    </form>
+
+    <!-- The Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Order Submitted Successfully!</h2>
+            <p id="modalMessage"></p>
+            <button id="okButton">OK</button>
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 1;
+
+        document.getElementById('add-item').addEventListener('click', () => {
+            const container = document.getElementById('items-container');
+            const newItemRow = document.createElement('div');
+            newItemRow.className = 'item-row';
+            newItemRow.id = `item-row-${itemCount}`;
+
+            newItemRow.innerHTML = `
+                <label for="item_id_${itemCount}">Item ID:</label>
+                <input type="text" id="item_id_${itemCount}" name="items[${itemCount}][item_id]" required>
+                <label for="quantity_${itemCount}">Quantity:</label>
+                <input type="number" id="quantity_${itemCount}" name="items[${itemCount}][quantity]" min="1" required>
+                <button type="button" class="remove-item" onclick="removeItem(${itemCount})">Remove Item</button>
+            `;
+
+            container.appendChild(newItemRow);
+            itemCount++;
+        });
+
+        function removeItem(id) {
+            const itemRow = document.getElementById(`item-row-${id}`);
+            itemRow.remove();
+            updateItemNames();
+        }
+
+        function updateItemNames() {
+            const itemRows = document.querySelectorAll('.item-row');
+            itemRows.forEach((row, index) => {
+                row.querySelector('input[name^="items["]').name = `items[${index}][item_id]`;
+                row.querySelector('input[name^="items["]').name = `items[${index}][quantity]`;
+                row.id = `item-row-${index}`;
+            });
+            itemCount = itemRows.length;
+        }
+
+        // Handle modal display
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('success');
+        const errorMessage = urlParams.get('error');
+        const email = urlParams.get('email'); // Add this if you pass the email as a query parameter
+
+        if (successMessage || errorMessage) {
+            const modal = document.getElementById('successModal');
+            const modalMessage = document.getElementById('modalMessage');
+
+            modalMessage.textContent = successMessage || errorMessage;
+            if (email) {
+                modalMessage.textContent += ` The confirmation was sent to ${email}.`;
+            }
+
+            modal.style.display = 'block';
+
+            // When the user clicks on <span> (x), close the modal
+            document.querySelector('.close').onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            // When the user clicks on OK button, close the modal and optionally redirect
+            document.getElementById('okButton').onclick = function() {
+                modal.style.display = 'none';
+                window.location.href = '/'; // Redirect back to main page
+            }
+        }
+    </script>
+</body>
+</html>
