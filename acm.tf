@@ -6,7 +6,7 @@ data "aws_route53_zone" "main" {
 
 # ACM Certificate
 resource "aws_acm_certificate" "main" {
-  domain_name       = "*.rekeyole.com" # Replace with your actual domain name
+  domain_name       = "*.tai-joh.com" # Replace with your actual domain name
   validation_method = "DNS"
 
   tags = {
