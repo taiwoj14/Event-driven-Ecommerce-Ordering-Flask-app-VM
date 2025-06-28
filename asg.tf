@@ -29,7 +29,7 @@ resource "aws_launch_template" "app_lt" {
               sudo apt install git -y
               sudo apt install python3-venv -y
               cd /home/ubuntu
-              git clone https://github.com/ooghenekaro/Event-driven-Ecommerce-Ordering-Flask-app-VM.git
+              https://github.com/taiwoj14/Event-driven-Ecommerce-Ordering-Flask-app-VM.git   
               cd Event-driven-Ecommerce-Ordering-Flask-app-VM
               sudo pip3 install -r requirements.txt --break-system-packages
               echo "[Unit]
