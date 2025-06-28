@@ -1,10 +1,10 @@
 variable "domain" {
   type    = string
-  default = "rekeyole.com"
+  default = "tai-joh.com"
 }
 
 
 variable "sub_domain" {
   type    = string
-  default = "app.rekeyole.com"
+  default = "app.tai-joh.com"
 }
